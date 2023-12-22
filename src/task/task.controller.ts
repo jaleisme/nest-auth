@@ -49,7 +49,7 @@ export class TaskController {
 
 
     @Get()
-    @UseGuards(JwtGuard)
+    // @UseGuards(JwtGuard)
     @ApiOperation({
         'summary': 'Retrieve all task data',
         'description': 'Retrieve and return all task data from the database',
