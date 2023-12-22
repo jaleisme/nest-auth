@@ -21,5 +21,11 @@ model Task {
   id            Int       @id @default(autoincrement())
   title         String
   description   String
-  due_date      DateTime @default(now())
+  due_date      DateTime?
+  list_id       Int
+}
+
+model List{
+    id            Int       @id @default(autoincrement())
+    title         String
 }
