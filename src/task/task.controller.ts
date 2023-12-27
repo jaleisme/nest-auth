@@ -147,6 +147,16 @@ export class TaskController {
             }
         }
     })
+    @ApiBody({
+        "schema": {
+            'type': 'object',
+            'properties': {
+                'title': {'type': 'string'},
+                'description': {'type': 'string'},
+                'due_date': {'type': 'date', example: '2023-12-13T06:48:49.444Z'},
+            }
+        } 
+    })
     async updateTask(@Param() params, @Body() req){      
         const id: number = +params.id;  
         return this.taskService.updateTask(req, id);
