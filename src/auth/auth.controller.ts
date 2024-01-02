@@ -5,10 +5,12 @@ import { LoginDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { RefreshJwtGuard } from './guards/refresh.guard';
 import { ApiBody, ApiHeader, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ResetGuard } from './guards/reset.guard';
+import { MailService } from 'src/mail-service/mail-service.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private userService: UserService, private authService: AuthService){}
+    constructor(private userService: UserService, private authService: AuthService, private mailService: MailService){}
 
     @Post('register')
     @ApiOperation({
@@ -39,7 +41,7 @@ export class AuthController {
     @ApiOperation({
         'summary': 'Logging into the system',
         'description': 'Logging into the system to access modules that can be only accessed after logging in.',
-        // 'requestBody': 
+        // 'requestBody':  
     })
     @ApiBody({
         "schema": {
@@ -94,5 +96,23 @@ export class AuthController {
     })
     async refreshtoken(@Request() req){
         return await this.authService.refreshToken(req.user);
+    }
+
+    @Post('generate-reset-password-token')
+    async generateResetToken(@Request() req){
+        const userData = this.userService.findByEmail(req.body.user);
+        const resetToken = await this.authService.generateResetPasswordToken(req.body.user);
+        const emailAddress = (await userData).email;
+        const name = (await userData).name;
+        
+        await this.mailService.sendResetPasswordEmail(emailAddress, name, resetToken);
+        return 'Email sent!';
+    }
+    
+    @Post('reset-password')
+    @UseGuards(ResetGuard)
+    async resetPassword(@Request() req){
+        return await this.userService.updatePassword(req.user.username, req.body.new_password);
+
     }
 }

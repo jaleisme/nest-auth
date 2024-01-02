@@ -1,12 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/auth.dto';
 import { UserService } from 'src/user/user.service';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService,  private jwtService: JwtService){}
+    constructor(private userService: UserService,  private jwtService: JwtService, private prisma: PrismaService){}
 
     async login(dto: LoginDto){
         const user = await this.validateUser(dto);
@@ -55,5 +56,25 @@ export class AuthService {
                 secret: process.env.jwtRefreshTokenKey,
             }),
         }
+    }
+
+    async generateResetPasswordToken(user:any){
+        const payload = {
+            username: user,
+        }
+        const resetToken = await this.jwtService.signAsync(payload, {
+            expiresIn: '1h',
+            secret: process.env.jwtResetTokenKey,
+        })
+        const userData = await this.prisma.user.update({
+            where: {email:user},
+            data: {
+                reset_token: resetToken,
+            }
+        });
+        if(!userData) {
+            throw new NotFoundException();
+        }
+        return resetToken;
     }
 }

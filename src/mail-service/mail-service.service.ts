@@ -15,4 +15,16 @@ export class MailService {
       },
     });
   }
+
+  async sendResetPasswordEmail(email: string, name: string, reset_token: string): Promise<void>{
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Taskify Account Reset Password',
+      template: './reset-password',
+      context: {
+        name,
+        reset_token,
+      },
+    });
+  }
 }

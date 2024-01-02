@@ -11,10 +11,21 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  name      String?
-  password  String
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  name        String?
+  password    String
+  reset_token String?
+}
+
+model Boards {
+  id          Int       @id @default(autoincrement())
+  name        String
+}
+
+model List{
+    id            Int       @id @default(autoincrement())
+    title         String
 }
 
 model Task {
@@ -25,7 +36,3 @@ model Task {
   list_id       Int
 }
 
-model List{
-    id            Int       @id @default(autoincrement())
-    title         String
-}
