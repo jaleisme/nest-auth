@@ -11,6 +11,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { MailService } from './mail-service/mail-service.service';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
+import { BoardModule } from './board/board.module';
 
 @Module({
   imports: [ConfigModule.forRoot(), UserModule, AuthModule, TaskModule, ListModule, MailerModule.forRoot({
@@ -33,7 +34,7 @@ import { join } from 'path';
       defaults: {
         from: '"No Reply" <no-reply@example.com>',
       },
-    }),
+    }), BoardModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, MailService],

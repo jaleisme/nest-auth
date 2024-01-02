@@ -16,16 +16,24 @@ model User {
   name        String?
   password    String
   reset_token String?
+  boards      Board[]
 }
 
-model Boards {
+model Board {
   id          Int       @id @default(autoincrement())
   name        String
+  creator     User      @relation(fields:[created_by], references:[id], onDelete: Cascade, onUpdate: Cascade)
+  created_by  Int 
+  lists       List[]
 }
 
 model List{
-    id            Int       @id @default(autoincrement())
-    title         String
+    id        Int       @id @default(autoincrement())
+    name      String
+    position  Int       @default(0)
+    board     Board     @relation(fields:[board_id], references:[id], onDelete: Cascade, onUpdate: Cascade)
+    board_id  Int
+    tasks     Task[]
 }
 
 model Task {
@@ -33,6 +41,7 @@ model Task {
   title         String
   description   String
   due_date      DateTime?
+  list          List     @relation(fields:[list_id], references:[id], onDelete: Cascade, onUpdate: Cascade)
   list_id       Int
 }
 

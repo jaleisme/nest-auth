@@ -1,12 +1,9 @@
 import { IsInt, IsString } from "class-validator";
 
-export class CreateListDto {
+export class CreateBoardDto {
     @IsString()
     name: string;
 
     @IsInt()
-    position: number;
-
-    @IsInt()
-    board_id: number;
+    created_by: number;
 }
