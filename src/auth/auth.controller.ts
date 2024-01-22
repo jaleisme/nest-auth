@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { RefreshJwtGuard } from './guards/refresh.guard';
 import { ApiBody, ApiHeader, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { ResetGuard } from './guards/reset.guard';
+import { VerificationGuard } from './guards/verification.guard';
 import { MailService } from 'src/mail-service/mail-service.service';
 
 @Controller('auth')
@@ -33,8 +34,16 @@ export class AuthController {
         description: 'Successfully registering user'
     })
     async registerUser(@Body() dto: CreateUserDto){
-        const register = await this.userService.create(dto);
+        const verificationToken = await this.authService.generateVerificationToken(dto.email);
+        const register = await this.userService.create({
+            email: dto.email,
+            name: dto.name,
+            password: dto.password,
+            verification_token: verificationToken, 
+        });
+        await this.mailService.sendWelcomeEmail(dto.email, dto.name, process.env.FRONTEND_URL, verificationToken);
         if(register) return HttpStatus.OK;
+
     }
 
     @Post('login')
@@ -114,5 +123,11 @@ export class AuthController {
     async resetPassword(@Request() req){
         return await this.userService.updatePassword(req.user.username, req.body.new_password);
 
+    }
+
+    @Post('verify-account')
+    @UseGuards(VerificationGuard)
+    async verifyAccount(@Request() req){
+        return await this.userService.verifyAccount(req.body.email);
     }
 }

@@ -11,12 +11,14 @@ datasource db {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
-  name        String?
-  password    String
-  reset_token String?
-  boards      Board[]
+  id                  Int     @id @default(autoincrement())
+  email               String  @unique
+  name                String?
+  password            String
+  reset_token         String?
+  verification_token  String?
+  is_verified         Boolean @default(false)
+  boards              Board[]
 }
 
 model Board {

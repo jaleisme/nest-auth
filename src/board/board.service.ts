@@ -22,7 +22,14 @@ export class BoardService {
 
   async findOne(id: number) {
     return await this.prisma.board.findUnique({
-      where: {id:id}
+      where: {id:id},
+      include:{
+        lists:{
+          include:{
+            tasks: true,
+          },
+        },
+      },
     });
   }
 

@@ -5,13 +5,16 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
-  async sendWelcomeEmail(email: string, name: string): Promise<void> {
+  async sendWelcomeEmail(email: string = 'jaleisme.id@gmail.com', name: string = 'Faizal', url: string = process.env.FRONTEND_URL, verificationToken: string = 'RUGIDONG'): Promise<void> {
     await this.mailerService.sendMail({
       to: email,
-      subject: 'Welcome to My App',
+      subject: 'Welcome to Taskify',
       template: './welcome', // Path to your email template
       context: {
         name,
+        url,
+        verificationToken,
+        email,
       },
     });
   }

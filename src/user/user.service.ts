@@ -11,10 +11,22 @@ export class UserService {
         const user = await this.prisma.user.update({
             where: {email:email},
             data: {
+                reset_token: null,
                 password: await hash(new_password, 10),
             }
         });
         return "Password updated successfully!";
+    }
+
+    async verifyAccount(email:string){
+        const user = await this.prisma.user.update({
+            where: {email:email},
+            data:{
+                verification_token: null,
+                is_verified: true
+            }
+        });
+        return "Account verified successfully!";
     }
 
     async create(dto: CreateUserDto){

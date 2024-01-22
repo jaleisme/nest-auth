@@ -9,7 +9,7 @@ export class TaskController {
     constructor(private taskService: TaskService){}
 
     @Post('create')
-    @UseGuards(JwtGuard)
+    // @UseGuards(JwtGuard)
     @ApiOperation({
         'summary': 'Create a new task data',
         'description': 'Create and save a new task data into the database',
@@ -91,7 +91,7 @@ export class TaskController {
 
 
     @Get(':id')
-    @UseGuards(JwtGuard)
+    // @UseGuards(JwtGuard)
     @ApiOperation({
         'summary': 'Get a specific task data',
         'description': 'Get a specific task data from the database',
@@ -122,7 +122,7 @@ export class TaskController {
     }
 
     @Put(':id')
-    @UseGuards(JwtGuard)
+    // @UseGuards(JwtGuard)
     @ApiOperation({
         'summary': 'Edit a specific task data',
         'description': 'Edit and update a specific task data from the database',
@@ -163,7 +163,7 @@ export class TaskController {
     }
 
     @Delete(':id')
-    @UseGuards(JwtGuard)
+    // @UseGuards(JwtGuard)
     @ApiOperation({
         'summary': 'Delete a task data',
         'description': 'Delete a specific task data from the database',

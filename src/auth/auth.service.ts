@@ -77,4 +77,15 @@ export class AuthService {
         }
         return resetToken;
     }
+
+    async generateVerificationToken(email:any){
+        const payload = {
+            username: email,
+        }
+        const verificationToken = await this.jwtService.signAsync(payload, {
+            expiresIn: '1h',
+            secret: process.env.jwtVerificationTokenKey,
+        })
+        return verificationToken;        
+    }
 }
