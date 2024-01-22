@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tes URL</title>
+  </head>
+  <style>
+    *{
+      font-family: sans-serif;
+    }
+    a{
+      padding: 12px 8px;
+      border-radius: 8px;
+      background-color: #3dc06e;
+      color: white;
+      text-decoration: none;
+      outline: none;
+      cursor: pointer;
+    }
+  </style>
+  <body>
+    <p>Hello {{ name }},</p>
+    <p>Welcome to My App! Thank you for joining us.</p>
+    <a href="{{ url }}/verify-email/{{ email }}/{{ verificationToken }}" target="_blank">Verify My Email</a>
+  </body>
+</html>

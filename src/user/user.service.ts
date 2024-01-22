@@ -7,6 +7,28 @@ import { hash } from 'bcrypt';
 export class UserService {
     constructor(private prisma: PrismaService){}
 
+    async updatePassword(email: string, new_password: string){
+        const user = await this.prisma.user.update({
+            where: {email:email},
+            data: {
+                reset_token: null,
+                password: await hash(new_password, 10),
+            }
+        });
+        return "Password updated successfully!";
+    }
+
+    async verifyAccount(email:string){
+        const user = await this.prisma.user.update({
+            where: {email:email},
+            data:{
+                verification_token: null,
+                is_verified: true
+            }
+        });
+        return "Account verified successfully!";
+    }
+
     async create(dto: CreateUserDto){
         const user = await this.prisma.user.findUnique({
             where: {
@@ -36,6 +58,14 @@ export class UserService {
         return await this.prisma.user.findUnique({
             where: {
                 id: id,
+            },
+        });
+    }
+
+    async findByResetToken(token:string){
+        return await this.prisma.user.findFirst({
+            where: {
+                reset_token: token,
             },
         });
     }
