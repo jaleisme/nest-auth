@@ -16,8 +16,14 @@ export class BoardService {
     return newBoard;
   }
 
-  async findAll() {
-    return await this.prisma.board.findMany();
+  async findAll(userId: number) {
+    return await this.prisma.board.findMany({
+      where: {
+        created_by: {
+          equals: userId
+        }
+      }
+    });
   }
 
   async findOne(id: number) {
@@ -35,7 +41,7 @@ export class BoardService {
 
   async update(id: number, updateBoardDto: UpdateBoardDto) {
     return await this.prisma.board.update({
-      where: {id:id},
+      where: {id:+id},
       data: {...updateBoardDto}
     });
   }

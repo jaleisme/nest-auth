@@ -15,6 +15,17 @@ export class AppController {
     await this.mailService.sendWelcomeEmail(email, name);
     return 'Email sent successfully';
   }  
+
+  @Get('/send-email-ITF')
+  async sendEmailITF(): Promise<string> {
+    const email = 'jaleisme.id@gmail.com';
+    const name = 'Faizal';
+
+    for (let i = 0; i < 5; i++) {
+      await this.mailService.sendWelcomeEmail(email, name);
+    }
+    return 'Email sent successfully';
+  }  
   
   @Get()
   @ApiOperation({
