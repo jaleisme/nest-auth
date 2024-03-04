@@ -13,7 +13,7 @@ export class BoardController {
     return this.boardService.create(createBoardDto);
   }
 
-  @UseGuards(JwtGuard)
+  // @UseGuards(JwtGuard)
   @Post() 
   findAll(@Body() request: any) {
     return this.boardService.findAll(request.userId);
