@@ -1,14 +1,15 @@
-import { Body, Controller, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpStatus, NotFoundException, Post, Request, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/user.dto';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { RefreshJwtGuard } from './guards/refresh.guard';
-import { ApiBody, ApiHeader, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ResetGuard } from './guards/reset.guard';
 import { VerificationGuard } from './guards/verification.guard';
 import { MailService } from 'src/mail-service/mail-service.service';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
     constructor(private userService: UserService, private authService: AuthService, private mailService: MailService){}
@@ -56,7 +57,7 @@ export class AuthController {
         "schema": {
             'type': 'object',
             'properties': {
-                'username': {'type': 'string', format: 'email'},
+                'email': {'type': 'string', format: 'email'},
                 'password': {'type': 'string', format: 'password'},
             }
         }    
@@ -108,17 +109,59 @@ export class AuthController {
     }
 
     @Post('generate-reset-password-token')
+    @ApiOperation({
+        'summary': 'Generating Token for Password Reset',
+        'description': 'Generating token to reset user`s account password',
+        // 'requestBody':  
+    })
+    @ApiBody({
+        "schema": {
+            'type': 'object',
+            'properties': {
+                'user': {'type': 'string', format: 'email'}
+            }
+        }    
+    })
+    @ApiOkResponse({
+        status: 200,
+        description: 'Email sent!'
+    })    
     async generateResetToken(@Request() req){
         const userData = this.userService.findByEmail(req.body.user);
-        const resetToken = await this.authService.generateResetPasswordToken(req.body.user);
-        const emailAddress = (await userData).email;
-        const name = (await userData).name;
-        
-        await this.mailService.sendResetPasswordEmail(emailAddress, name, resetToken);
-        return 'Email sent!';
+        if(!userData){
+            const resetToken = await this.authService.generateResetPasswordToken(req.body.user);
+            const emailAddress = (await userData).email;
+            const name = (await userData).name;
+            
+            await this.mailService.sendResetPasswordEmail(emailAddress, name, resetToken);
+            return 'Email sent!';
+        }
+        throw new NotFoundException();
     }
     
     @Post('reset-password')
+    @ApiOperation({
+        'summary': 'Reset Password for User',
+        'description': 'Reset user`s account password according to the new given password',
+        // 'requestBody':  
+    })
+    @ApiHeader({
+        'name': 'Authorization',
+        'required': true,
+        'description': 'Refresh token for authorization'
+    })
+    @ApiBody({
+        "schema": {
+            'type': 'object',
+            'properties': {
+                'new_password': {'type': 'string', format: 'password'}
+            }
+        }    
+    })
+    @ApiOkResponse({
+        status: 200,
+        description: 'Password updated successfully!'
+    })  
     @UseGuards(ResetGuard)
     async resetPassword(@Request() req){
         return await this.userService.updatePassword(req.user.username, req.body.new_password);
@@ -126,6 +169,28 @@ export class AuthController {
     }
 
     @Post('verify-account')
+    @ApiOperation({
+        'summary': 'User account verification',
+        'description': 'Verifying user account',
+        // 'requestBody':  
+    })
+    @ApiHeader({
+        'name': 'Authorization',
+        'required': true,
+        'description': 'Verification token for authorization'
+    })
+    @ApiBody({
+        "schema": {
+            'type': 'object',
+            'properties': {
+                'email': {'type': 'string', format: 'email'}
+            }
+        }    
+    })
+    @ApiOkResponse({
+        status: 200,
+        description: 'Password updated successfully!'
+    })  
     @UseGuards(VerificationGuard)
     async verifyAccount(@Request() req){
         return await this.userService.verifyAccount(req.body.email);

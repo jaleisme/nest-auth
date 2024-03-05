@@ -6,33 +6,12 @@ import { MailService } from './mail-service/mail-service.service';
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService, private readonly mailService: MailService) {}
-
-  @Get('/send-email')
-  async sendEmail(): Promise<string> {
-    const email = 'jaleisme.id@gmail.com';
-    const name = 'Faizal';
-
-    await this.mailService.sendWelcomeEmail(email, name);
-    return 'Email sent successfully';
-  }  
-
-  @Get('/send-email-ITF')
-  async sendEmailITF(): Promise<string> {
-    const email = 'jaleisme.id@gmail.com';
-    const name = 'Faizal';
-
-    for (let i = 0; i < 5; i++) {
-      await this.mailService.sendWelcomeEmail(email, name);
-    }
-    return 'Email sent successfully';
-  }  
   
   @Get()
   @ApiOperation({
     'summary': 'Root route of this app',
-    'description': 'Root route of this app, mainly navigating devs to access the API docs',
-    // 'requestBody': 
-})
+    'description': 'Root route of this app, mainly navigating devs to access the API docs'
+  })
   getHello(): string {
     return this.appService.getHello();
   }

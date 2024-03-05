@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/user.dto';
 import { hash } from 'bcrypt';
@@ -15,7 +15,10 @@ export class UserService {
                 password: await hash(new_password, 10),
             }
         });
-        return "Password updated successfully!";
+        if(user){
+            return "Password updated successfully!";
+        }
+        throw new NotFoundException();
     }
 
     async verifyAccount(email:string){
