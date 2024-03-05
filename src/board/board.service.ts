@@ -17,13 +17,33 @@ export class BoardService {
   }
 
   async findAll(userId: number) {
-    return await this.prisma.board.findMany({
+    let ownedBoards = await this.prisma.board.findMany({
       where: {
         created_by: {
           equals: userId
         }
       }
     });
+    let memberBoards = await this.prisma.board_Member.findMany({
+      select:{
+        board: {
+          select: {
+            id: true,
+            name: true,
+            created_by: true
+          }
+        }
+      },
+      where:{
+        user_id: {
+          equals: userId
+        }
+      }
+    })
+    memberBoards.map((data) => {
+      ownedBoards.push(data.board);
+    });
+    return ownedBoards;
   }
 
   async findOne(id: number) {

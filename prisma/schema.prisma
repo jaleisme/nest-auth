@@ -19,14 +19,24 @@ model User {
   verification_token  String?
   is_verified         Boolean @default(false)
   boards              Board[]
+  board_members       Board_Member[]
 }
 
 model Board {
-  id          Int       @id @default(autoincrement())
-  name        String
-  creator     User      @relation(fields:[created_by], references:[id], onDelete: Cascade, onUpdate: Cascade)
-  created_by  Int 
-  lists       List[]
+  id            Int       @id @default(autoincrement())
+  name          String
+  creator       User      @relation(fields:[created_by], references:[id], onDelete: Cascade, onUpdate: Cascade)
+  created_by    Int 
+  lists         List[]
+  board_members Board_Member[]
+}
+
+model Board_Member {
+  id        Int     @id @default(autoincrement())
+  board     Board   @relation(fields: [board_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  board_id  Int
+  user      User    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id   Int
 }
 
 model List{
@@ -46,4 +56,3 @@ model Task {
   list          List     @relation(fields:[list_id], references:[id], onDelete: Cascade, onUpdate: Cascade)
   list_id       Int
 }
-
