@@ -2,8 +2,9 @@ import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Param, Po
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/task.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { ApiBody, ApiHeader, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Task Management')
 @Controller('task')
 export class TaskController {
     constructor(private taskService: TaskService){}
