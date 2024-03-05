@@ -38,7 +38,6 @@ export class BoardController {
 
   @Get(':id')
   @UseGuards(JwtGuard)
-  @UseGuards(JwtGuard)
   findOne(@Param('id') id: number) {
     return this.boardService.findOne(+id);
   }
