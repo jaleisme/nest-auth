@@ -1,14 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ListService } from './list.service';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { ApiBody, ApiHeader, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('list')
 export class ListController {
   constructor(private readonly listService: ListService) {}
 
   @Post()
+  @UseGuards(JwtGuard)
   @ApiOperation({
     'summary': 'Create new list data',
     'description': 'Create and save a new task data into the database',
@@ -46,6 +48,7 @@ export class ListController {
   }
 
   @Get()
+  @UseGuards(JwtGuard)
   @ApiOperation({
     'summary': 'Retrieve all lists data',
     'description': 'Retrieve and return all lists data from the database',
@@ -76,6 +79,7 @@ export class ListController {
   }
 
   @Get(':id')
+  @UseGuards(JwtGuard)
   @ApiOperation({
     'summary': 'Get a specific list data',
     'description': 'Get a specific list data from the database',
@@ -103,6 +107,7 @@ export class ListController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtGuard)
   @ApiOperation({
     'summary': 'Edit a specific list data',
     'description': 'Edit and update a specific list data from the database',
@@ -136,6 +141,7 @@ export class ListController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtGuard)
   @ApiOperation({
     'summary': 'Delete a list data',
     'description': 'Delete a specific list data from the database',
