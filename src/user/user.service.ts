@@ -57,11 +57,12 @@ export class UserService {
         });
     }
 
-    async findById(id:number){
-        return await this.prisma.user.findUnique({
-            where: {
-                id: id,
-            },
+    async findAll(){
+        return await this.prisma.user.findMany({
+            select:{
+                id: true,
+                name: true,
+            }
         });
     }
 
