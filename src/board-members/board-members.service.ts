@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateBoardMemberDto } from './dto/create-board-member.dto';
 import { UpdateBoardMemberDto } from './dto/update-board-member.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -8,33 +8,60 @@ export class BoardMembersService {
   constructor(private prisma: PrismaService){}
 
   async create(createBoardMemberDto: CreateBoardMemberDto) {
-    const newBoardMember = this.prisma.board_Member.create({
-      data:{
-        ...createBoardMemberDto,
+    const duplicationCheck = await this.prisma.board_Member.findMany({
+      where: {
+        board_id: createBoardMemberDto.board_id,
+        user_id: createBoardMemberDto.user_id,
       },
     });
-    return newBoardMember;
+    console.log(duplicationCheck.length);
+    if(duplicationCheck.length == 0){
+      const newMember = this.prisma.board_Member.create({
+        data:{
+          ...createBoardMemberDto,
+        },
+      });
+      return newMember;
+    }
+    throw new BadRequestException();
   }
 
   async findByBoard(boardId: number) {
-    return await this.prisma.board_Member.findMany({
+    const fetchMember = await this.prisma.board_Member.findMany({
+      select: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+          }
+        }
+      },
       where: {
         board_id: {
           equals: boardId,
         },
       },
     });
+    return fetchMember;
+    
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} boardMember`;
-  }
-
-  update(id: number, updateBoardMemberDto: UpdateBoardMemberDto) {
-    return `This action updates a #${id} boardMember`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} boardMember`;
+  async remove(req) {
+    return await this.prisma.board_Member.deleteMany({
+      where: {
+        AND:[
+          {
+            board_id: {
+              equals: +req.board_id
+            }
+          },
+          {
+            user_id: {
+              equals: +req.user_id
+            }
+          },
+        ],
+      },
+    });
   }
 }

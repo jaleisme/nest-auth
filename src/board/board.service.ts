@@ -18,14 +18,14 @@ export class BoardService {
   }
 
   async findAll(userId: number) {
-    let ownedBoards = await this.prisma.board.findMany({
+    const ownedBoards = await this.prisma.board.findMany({
       where: {
         created_by: {
           equals: userId,
         },
       },
     });
-    let memberBoards = await this.prisma.board_Member.findMany({
+    const memberBoards = await this.prisma.board_Member.findMany({
       select:{
         board: {
           select: {
@@ -40,11 +40,16 @@ export class BoardService {
           equals: userId
         }
       }
-    })
-    memberBoards.map((data) => {
-      ownedBoards.push(data.board);
     });
-    return ownedBoards;
+    let collab = [];
+    memberBoards.forEach((val, n) => {
+      collab.push(val.board)
+    });
+    const boards = {
+      owned: ownedBoards,
+      collab: collab
+    };
+    return boards;
   }
 
   async findOne(id: number) {
@@ -56,6 +61,17 @@ export class BoardService {
             tasks: true,
           },
         },
+        board_members: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              }
+            }
+          }
+        }
       },
     });
   }
