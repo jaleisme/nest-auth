@@ -12,7 +12,7 @@ export class AuthService {
     async login(dto: LoginDto){
         const user = await this.validateUser(dto);
         const payload = {
-            username: user.email,
+            email: user.email,
             sub: {
                 name: user.name,
             }
@@ -33,7 +33,7 @@ export class AuthService {
     }
 
     async validateUser(dto:LoginDto){
-        const user = await this.userService.findByEmail(dto.username);
+        const user = await this.userService.findByEmail(dto.email);
         if(user && (await compare(dto.password,user.password))){
             const {password, ...result} = user;
             return result;
@@ -43,7 +43,7 @@ export class AuthService {
 
     async refreshToken(user:any){
         const payload = {
-            username: user.username,
+            email: user.username,
             sub: user.sub,
         }
         return {
@@ -60,7 +60,7 @@ export class AuthService {
 
     async generateResetPasswordToken(user:any){
         const payload = {
-            username: user,
+            email: user,
         }
         const resetToken = await this.jwtService.signAsync(payload, {
             expiresIn: '1h',
@@ -80,7 +80,7 @@ export class AuthService {
 
     async generateVerificationToken(email:any){
         const payload = {
-            username: email,
+            email: email,
         }
         const verificationToken = await this.jwtService.signAsync(payload, {
             expiresIn: '1h',

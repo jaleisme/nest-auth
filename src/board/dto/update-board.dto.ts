@@ -5,7 +5,4 @@ import { IsInt, IsString } from 'class-validator';
 export class UpdateBoardDto extends PartialType(CreateBoardDto) {
     @IsString()
     name: string;
-
-    @IsInt()
-    created_by: number;
 }

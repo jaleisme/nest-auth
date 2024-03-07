@@ -7,11 +7,11 @@ import { ApiBody, ApiHeader, ApiOkResponse, ApiOperation } from '@nestjs/swagger
 export class UserController {
     constructor(private userService: UserService) {}
 
-    @Get(":id")
+    @Get()
     @UseGuards(JwtGuard)
     @ApiOperation({
-        'summary': 'Get a specific user data from the database',
-        'description': 'Retrieve and return a specific user data from the database.',
+        'summary': 'Get all user data from the database',
+        'description': 'Retrieve and return all user data from the database.',
     })
     @ApiHeader({
         name: 'Authorization',
@@ -26,12 +26,10 @@ export class UserController {
             'properties': {
                 'id': {'type': 'number'},
                 'name': {'type': 'string', format: 'name'},
-                'email': {'type': 'string', format: 'email'},
-                'password': {'type': 'string', format: 'password'},
             }
         }
     })
-    async getUserProfile(@Param("id") id: number) {
-        return await this.userService.findById(id);
+    async getUserProfile() {
+        return await this.userService.findAll();
     }
 }
