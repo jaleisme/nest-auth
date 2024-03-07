@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { BoardMembersService } from './board-members.service';
 import { CreateBoardMemberDto } from './dto/create-board-member.dto';
 import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -58,7 +58,7 @@ export class BoardMembersController {
     return this.boardMembersService.findByBoard(request.board_id);
   }
 
-  @Delete('remove-member')
+  @Post('remove-member')
   @ApiHeader({
     'name': 'Authorization',
     'required': true,

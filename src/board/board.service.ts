@@ -71,6 +71,13 @@ export class BoardService {
               }
             }
           }
+        },
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
         }
       },
     });
